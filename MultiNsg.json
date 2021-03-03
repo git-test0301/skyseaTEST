@@ -14,6 +14,11 @@
             "defaultValue": "K855VScode03",
             "type": "String"
         },
+        "networkSecurityGroups_K855VScode04_name": {
+            "defaultValue": "K855VScode04",
+            "type": "String"
+        },
+
         "applicationSecurityGroups_K855ASG01_externalid": {
             "defaultValue": "/subscriptions/e38aa084-3612-489e-84bf-7f84d2c9b5ec/resourceGroups/K855RGJW01/providers/Microsoft.Network/applicationSecurityGroups/K855ASG01",
             "type": "String"
