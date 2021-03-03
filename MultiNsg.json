@@ -1,0 +1,231 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "networkSecurityGroups_K855VScode01_name": {
+            "defaultValue": "K855VScode01",
+            "type": "String"
+        },
+        "networkSecurityGroups_K855VScode02_name": {
+            "defaultValue": "K855VScode02",
+            "type": "String"
+        },
+        "networkSecurityGroups_K855VScode03_name": {
+            "defaultValue": "K855VScode03",
+            "type": "String"
+        },
+        "applicationSecurityGroups_K855ASG01_externalid": {
+            "defaultValue": "/subscriptions/e38aa084-3612-489e-84bf-7f84d2c9b5ec/resourceGroups/K855RGJW01/providers/Microsoft.Network/applicationSecurityGroups/K855ASG01",
+            "type": "String"
+        }
+
+    },
+    "variables": {
+        "ivanti01":"133.253.10.11",
+        "ivanti02":[
+            "133.253.10.12",
+            "133.253.10.13",
+            "133.253.10.14",
+            "133.253.10.15"
+        ],
+        "kubota-sakaiNW":"192.168.10.0/24",
+        "CiscowebexPort":[
+            "443",
+            "5004"
+        ]
+    },
+    "resources": [
+        {
+            "name": "[parameters('networkSecurityGroups_K855VScode01_name')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2019-11-01",
+            "location": "japanwest",
+            "properties": {
+                "securityRules": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "apiVersion": "2020-05-01",
+            "name": "[concat(parameters('networkSecurityGroups_K855VScode01_name'), '/nsgrule1')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_K855VScode01_name'))]"
+            ],
+            "properties": {
+                "protocol": "TCP",
+                "sourcePortRange": "*",
+                "destinationPortRange": "",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 100,
+                "direction": "Inbound",
+                "sourcePortRanges":"",
+                "destinationPortRanges": "[variables('CiscowebexPort')]",
+                "sourceAddressPrefixes": "",
+                "destinationAddressPrefixes": ""
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "apiVersion": "2020-05-01",
+            "name": "[concat(parameters('networkSecurityGroups_K855VScode01_name'), '/nsgrule2')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_K855VScode01_name'))]"
+            ],
+            "properties": {
+                "protocol": "UDP",
+                "sourcePortRange": "*",
+                "destinationPortRange": "*",
+                "sourceAddressPrefix": "[variables('kubota-sakaiNW')]",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 200,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": "",
+                "sourceAddressPrefixes": "",
+                "destinationAddressPrefixes": ""
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "apiVersion": "2020-05-01",
+            "name": "[concat(parameters('networkSecurityGroups_K855VScode01_name'), '/ASG-source')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_K855VScode01_name'))]"
+            ],
+            "properties": {
+                "protocol": "*",
+                "sourcePortRange": "*",
+                "destinationPortRange": "8080",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 210,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": [],
+                "sourceAddressPrefixes": [],
+                "destinationAddressPrefixes": [],
+                "sourceApplicationSecurityGroups": [
+                    {
+                        "id": "[parameters('applicationSecurityGroups_K855ASG01_externalid')]"
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "apiVersion": "2020-05-01",
+            "name": "[concat(parameters('networkSecurityGroups_K855VScode01_name'), '/ASG-dest')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_K855VScode01_name'))]"
+            ],
+            "properties": {
+                "protocol": "*",
+                "sourcePortRange": "*",
+                "destinationPortRange": "8080",
+                "sourceAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 220,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": [],
+                "sourceAddressPrefixes": [],
+                "destinationAddressPrefixes": [],
+                "destinationApplicationSecurityGroups": [
+                    {
+                        "id": "[parameters('applicationSecurityGroups_K855ASG01_externalid')]"
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[parameters('networkSecurityGroups_K855VScode02_name')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2019-11-01",
+            "location": "japaneast",
+            "properties": {
+                "securityRules": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "apiVersion": "2020-05-01",
+            "name": "[concat(parameters('networkSecurityGroups_K855VScode02_name'), '/nsgrule1')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_K855VScode02_name'))]"
+            ],
+            "properties": {
+                "protocol": "TCP",
+                "sourcePortRange": "*",
+                "destinationPortRange": "*",
+                "sourceAddressPrefix": "[variables('ivanti01')]",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 100,
+                "direction": "Inbound",
+                "sourcePortRanges":"",
+                "destinationPortRanges": "",
+                "sourceAddressPrefixes": "",
+                "destinationAddressPrefixes": ""
+            }
+        },
+        {
+            "name": "[parameters('networkSecurityGroups_K855VScode03_name')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2019-11-01",
+            "location": "japaneast",
+            "properties": {
+                "securityRules": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "apiVersion": "2020-05-01",
+            "name": "[concat(parameters('networkSecurityGroups_K855VScode03_name'), '/nsgrule1')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_K855VScode03_name'))]"
+            ],
+            "properties": {
+                "protocol": "UDP",
+                "sourcePortRange": "*",
+                "destinationPortRange": "*",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 100,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": "",
+                "sourceAddressPrefixes": "",
+                "destinationAddressPrefixes": ""
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "apiVersion": "2020-05-01",
+            "name": "[concat(parameters('networkSecurityGroups_K855VScode03_name'), '/nsgrule2')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_K855VScode03_name'))]"
+            ],
+            "properties": {
+                "protocol": "UDP",
+                "sourcePortRange": "*",
+                "destinationPortRange": "",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 200,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": "[variables('CiscowebexPort')]",
+                "sourceAddressPrefixes": "",
+                "destinationAddressPrefixes": ""
+            }
+        }
+    ]
+}
+
+
+
